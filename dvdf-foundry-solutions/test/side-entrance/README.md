@@ -18,11 +18,14 @@
 
 ## 4. Proof of Concept (PoC)
 - **Test Contract Path:** [`test/side-entrance/SideEntrance.t.sol`](test/side-entrance/SideEntrance.t.sol)
+- **Execution Command:**
+  ```bash
+  forge test --match-test test_sideEntrance -vvvv
 
 ## 5.Mitigation Strategies
-1. **Reentrancy Lock (nonReentrant)：** Apply OpenZeppelin's nonReentrant modifier to flashLoan(), deposit(), and withdraw(). When flashLoan() acquires the lock, invoking deposit() inside the execute() callback will be blocked and trigger an immediate revert.
+1. **Reentrancy Lock (nonReentrant):** Apply OpenZeppelin's nonReentrant modifier to flashLoan(), deposit(), and withdraw(). When flashLoan() acquires the lock, invoking deposit() inside the execute() callback will be blocked and trigger an immediate revert.
 2. **Independent State Accounting Variable:** Introduce an explicit state variable (e.g., totalDeposits) to track legitimate pool deposits. Record totalDeposits before invoking execute(), and verify after the callback that totalDeposits has not been tampered with.
-3. ** Explicit Individual Balance Validation:** Record balances[msg.sender] prior to executing the callback, and verify afterwards that the borrower's deposit balance remains unchanged (balances[msg.sender] != balancesBefore -> revert RepayFailed()).
+3. **Explicit Individual Balance Validation:** Record balances[msg.sender] prior to executing the callback, and verify afterwards that the borrower's deposit balance remains unchanged (balances[msg.sender] != balancesBefore -> revert RepayFailed()).
 
 ## 6.Auditor's Perspective
 1. Be extremely cautious when a contract relies on address(this).balance for repayment validation. Always verify whether raw contract assets have decoupled from internal ledger records.
