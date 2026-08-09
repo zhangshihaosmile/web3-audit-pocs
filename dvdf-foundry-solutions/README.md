@@ -1,59 +1,42 @@
-# Damn Vulnerable DeFi
+# Damn Vulnerable DeFi Solutions (Foundry)
 
-Damn Vulnerable DeFi is _the_ smart contract security playground for developers, security researchers and educators.
+A professional repository containing automated Proof-of-Concept (PoC) exploit scripts and detailed audit writeups for **Damn Vulnerable DeFi** challenges, implemented strictly using **Foundry**.
 
-Perhaps the most sophisticated vulnerable set of Solidity smart contracts ever witnessed, it features flashloans, price oracles, governance, NFTs, DEXs, lending pools, smart contract wallets, timelocks, vaults, meta-transactions, token distributions, upgradeability and more.
+---
 
-Use Damn Vulnerable DeFi to:
+## Project Overview
 
-- Sharpen your auditing and bug-hunting skills.
-- Learn how to detect, test and fix flaws in realistic scenarios to become a security-minded developer.
-- Benchmark smart contract security tooling.
-- Create educational content on smart contract security with articles, tutorials, talks, courses, workshops, trainings, CTFs, etc. 
+This repository serves as a practical portfolio for Web3 smart contract auditing and vulnerability research. Every challenge is solved by writing executable Foundry tests (`.t.sol`) without relying on external web consoles or Remix, mimicking real-world commercial auditing workflows.
 
-## Install
+---
 
-1. Clone the repository.
-2. Checkout the latest release (for example, `git checkout v4.1.0`)
-3. Rename the `.env.sample` file to `.env` and add a valid RPC URL. This is only needed for the challenges that fork mainnet state.
-4. Either install [Foundry](https://book.getfoundry.sh/getting-started/installation), or use the [provided devcontainer](./.devcontainer/) (In VSCode, open the repository as a devcontainer with the command "Devcontainer: Open Folder in Container...")
-5. Run `forge build` to initialize the project.
+## Challenge Progress Tracker
 
-## Usage
+- [x] **01. Unstoppable** | [`Writeup`](writeups/01-unstoppable.md) | [`PoC`](test/unstoppable/Unstoppable.t.sol)
+- [x] **02. Naive Receiver** | [`Writeup`](writeups/02-naive-receiver.md) | [`PoC`](test/naive-receiver/NaiveReceiver.t.sol)
+- [x] **03. Truster** | [`Writeup`](writeups/03-truster.md) | [`PoC`](test/truster/Truster.t.sol)
+- [x] **04. Side Entrance** | [`Writeup`](writeups/04-side-entrance.md) | [`PoC`](test/side-entrance/SideEntrance.t.sol)
+- [ ] **05. The Reward Pool** | Writeup | PoC
+- [ ] **06. Selfie** | Writeup | PoC
+- [ ] **07. Compromised** | Writeup | PoC
+- [ ] **08. Puppet** | Writeup | PoC
+- [ ] **09. Puppet V2** | Writeup | PoC
+- [ ] **10. Free Rider** | Writeup | PoC
 
-Each challenge is made up of:
+---
 
-- A prompt located in `src/<challenge-name>/README.md`.
-- A set of contracts located in `src/<challenge-name>/`.
-- A [Foundry test](https://book.getfoundry.sh/forge/tests) located in `test/<challenge-name>/<ChallengeName>.t.sol`.
+## Repository Structure
 
-To solve a challenge:
+```text
+.
+├── src/            # Vulnerable protocol smart contracts
+├── test/           # Foundry exploit test scripts (.t.sol)
+├── writeups/       # Detailed English audit reports & technical breakdowns (.md)
+├── foundry.toml    # Foundry configuration file
+└── README.md       # Project documentation & progress checklist
+```
 
-1. Read the challenge's prompt.
-2. Uncover the flaw(s) in the challenge's smart contracts.
-3. Code your solution in the corresponding test file.
-4. Try your solution with `forge test --mp test/<challenge-name>/<ChallengeName>.t.sol`.
-
-> In challenges that restrict the number of transactions, you might need to run the test with the `--isolate` flag.
-
-If the test passes, you've solved the challenge!
-
-Challenges may have more than one possible solution.
-
-### Rules
-
-- You must always use the `player` account.
-- You must not modify the challenges' initial nor final conditions.
-- You can code and deploy your own smart contracts.
-- You can use Foundry's cheatcodes to advance time when necessary.
-- You can import external libraries that aren't installed, although it shouldn't be necessary.
-
-## Troubleshooting
-
-You can ask the community for help in [the discussions section](https://github.com/theredguild/damn-vulnerable-defi/discussions).
-
-## Disclaimer
-
-All code, practices and patterns in this repository are DAMN VULNERABLE and for educational purposes only.
-
-DO NOT USE IN PRODUCTION.
+## Contact / Profile
+- GitHub: zhangshihaosmile
+- Email: smile_zhangshihao@163.com
+- Role: Web3 Smart Contract Security Researcher / Auditor

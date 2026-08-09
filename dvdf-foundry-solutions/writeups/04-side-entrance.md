@@ -17,10 +17,11 @@
 4. Call `withdraw()` to extract the credited 1,000 ETH from the internal ledger, then transfer all funds to the recovery account.
 
 ## 4. Proof of Concept (PoC)
-- **Test Contract Path:** [`test/side-entrance/SideEntrance.t.sol`](test/side-entrance/SideEntrance.t.sol)
+- **Test Contract Path:** [`test/side-entrance/SideEntrance.t.sol`](../test/side-entrance/SideEntrance.t.sol)
 - **Execution Command:**
   ```bash
   forge test --match-test test_sideEntrance -vvvv
+  ```
 
 ## 5.Mitigation Strategies
 1. **Reentrancy Lock (nonReentrant):** Apply OpenZeppelin's nonReentrant modifier to flashLoan(), deposit(), and withdraw(). When flashLoan() acquires the lock, invoking deposit() inside the execute() callback will be blocked and trigger an immediate revert.
