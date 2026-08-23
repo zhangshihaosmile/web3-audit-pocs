@@ -39,13 +39,21 @@ web3-audit-pocs/
 ## Key PoC Achievements & Progress
 
 ### Damn Vulnerable DeFi (Foundry)
-- Unstoppable: Identified pool balance manipulation leading to flash loan DoS.
+- **Unstoppable:** Identified pool balance manipulation leading to flash loan DoS.
 
-- Naive Receiver: Exploited lack of access control & ERC-2771 context smuggling (Multicall + delegatecall) to drain 1,010 WETH.
+- **Naive Receiver:** Exploited lack of access control & ERC-2771 context smuggling (Multicall + delegatecall) to drain 1,010 WETH.
 
-- Truster: Exploited arbitrary functionCall to issue unauthorized ERC20 token approvals.
+- **Truster:** Exploited arbitrary functionCall to issue unauthorized ERC20 token approvals.
 
-- Side Entrance: Utilized flash loan deposits to bypass protocol accounting balance checks.
+- **Side Entrance:** Utilized flash loan deposits to bypass protocol accounting balance checks.
+
+- **The Rewarder:** Exploited snapshot-based reward distribution timing via flash loans to claim the majority share of protocol rewards.
+
+- **Selfie:** Leveraged flash-loaned voting tokens without historical snapshots to queue and execute a malicious governance proposal.
+
+- **Compromised:** Extracted leaked oracle private keys from server response headers to manipulate median NFT spot prices and drain exchange reserves.
+
+- **Puppet:** Manipulated a low-liquidity AMM spot price oracle via large token swaps to borrow pool reserves with minimal ETH collateral.
 
 ### Ethernaut (OpenZeppelin)
 - Completed Levels 00–10 (Fallback, Fallout, Reentrancy, Telephone, Token, Delegation, etc.).

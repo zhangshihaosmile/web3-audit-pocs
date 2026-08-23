@@ -16,10 +16,10 @@ This repository serves as a practical portfolio for Web3 smart contract auditing
 - [x] **02. Naive Receiver** | [`Writeup`](writeups/02-naive-receiver.md) | [`PoC`](test/naive-receiver/NaiveReceiver.t.sol)
 - [x] **03. Truster** | [`Writeup`](writeups/03-truster.md) | [`PoC`](test/truster/Truster.t.sol)
 - [x] **04. Side Entrance** | [`Writeup`](writeups/04-side-entrance.md) | [`PoC`](test/side-entrance/SideEntrance.t.sol)
-- [ ] **05. The Reward Pool** | Writeup | PoC
-- [ ] **06. Selfie** | Writeup | PoC
-- [ ] **07. Compromised** | Writeup | PoC
-- [ ] **08. Puppet** | Writeup | PoC
+- [x] **05. The Reward** | [`Writeup`](writeups/05-the-rewarder.md) | [`PoC`](test/the-rewarder/TheRewarder.t.sol)
+- [x] **06. Selfie** | [`Writeup`](writeups/06-selfie.md) | [`PoC`](test/selfie/Selfie.t.sol)
+- [x] **07. Compromised** | [`Writeup`](writeups/07-compromised.md) | [`PoC`](test/compromised/Compromised.t.sol)
+- [x] **08. Puppet** | [`Writeup`](writeups/08-puppet.md) | [`PoC`](test/puppet/Puppet.t.sol)
 - [ ] **09. Puppet V2** | Writeup | PoC
 - [ ] **10. Free Rider** | Writeup | PoC
 
