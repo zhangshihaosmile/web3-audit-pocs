@@ -55,6 +55,12 @@ web3-audit-pocs/
 
 - **Puppet:** Manipulated a low-liquidity AMM spot price oracle via large token swaps to borrow pool reserves with minimal ETH collateral.
 
+- **Puppet V2:** Manipulated a low-liquidity Uniswap V2 spot price oracle via large token swaps to borrow pool reserves with minimal WETH collateral.
+
+- **Free Rider:** Exploited Uniswap V2 flash swaps and a marketplace payout logic flaw to acquire 6 NFTs for the price of 1 and claim the bounty.
+
+- **Puppet V3:** Manipulated a short Uniswap V3 TWAP oracle window in a shallow pool to collapse collateral requirements and borrow pool assets with zero collateral.
+
 ### Ethernaut (OpenZeppelin)
 - Completed Levels 00–10 (Fallback, Fallout, Reentrancy, Telephone, Token, Delegation, etc.).
 
