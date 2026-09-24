@@ -20,8 +20,9 @@ This repository serves as a practical portfolio for Web3 smart contract auditing
 - [x] **06. Selfie** | [`Writeup`](writeups/06-selfie.md) | [`PoC`](test/selfie/Selfie.t.sol)
 - [x] **07. Compromised** | [`Writeup`](writeups/07-compromised.md) | [`PoC`](test/compromised/Compromised.t.sol)
 - [x] **08. Puppet** | [`Writeup`](writeups/08-puppet.md) | [`PoC`](test/puppet/Puppet.t.sol)
-- [ ] **09. Puppet V2** | Writeup | PoC
-- [ ] **10. Free Rider** | Writeup | PoC
+- [x] **09. Puppet V2** | [`Writeup`](writeups/09-puppet-v2.md) | [`PoC`](test/puppet-v2/PuppetV2.t.sol)
+- [x] **10. Free Rider** | [`Writeup`](writeups/10-free-rider.md) | [`PoC`](test/free-rider/FreeRider.t.sol)(test/free-rider/FreeRiderAttack.sol)
+- [x] **11. Puppet V3** | [`Writeup`](writeups/11-puppet-v3.md) | [`PoC`](test/puppet-v3/PuppetV3.t.sol)
 
 ---
 
